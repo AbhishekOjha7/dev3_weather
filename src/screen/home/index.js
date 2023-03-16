@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   PermissionsAndroid,
   NativeModules,
+  Modal,
+  ActivityIndicator,
 } from 'react-native';
 import React from 'react';
 import localImages from '../../utils/localImages';
@@ -30,8 +32,6 @@ export default function HomeScreen() {
   );
   console.log();
 
-  console.log('current', current);
-
   const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
       try {
@@ -48,7 +48,7 @@ export default function HomeScreen() {
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
           Geolocation.getCurrentPosition(
             position => {
-              console.log(position);
+              console.log(position, 'position');
               setLocation({
                 lat: position.coords.latitude,
                 long: position.coords.longitude,
@@ -56,11 +56,9 @@ export default function HomeScreen() {
               const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=437b42a4ae70478eb8271532230903&q=${position.coords.latitude},${position.coords.longitude}&days=5&aqi=yes&alerts=yes`;
               dispatch(wetherApi(apiUrl));
             },
-            error => console.log(error),
+            error => console.log(error, ' error here'),
             {
-              enableHighAccuracy: true,
               timeout: 15000,
-              maximumAge: 10000,
             },
           );
         } else {
@@ -89,8 +87,6 @@ export default function HomeScreen() {
       );
     }
   };
-
-  const next = () => {};
 
   const wetherApi = apiUrl =>
     getWeatherApi(
