@@ -1,6 +1,6 @@
 const initialState = {
   current: {},
-  location: {}
+  currentLocation: {}
 };
 
 const ForecastReducer = (state = initialState, action) => {
@@ -8,8 +8,8 @@ const ForecastReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'current':
       return {...state, ...action.payload};
-    case 'location':
-      return {...state, ...action.payload};
+    case 'currentLocation':
+      return {...state, currentLocation: action.payload};
     default:
       return state;
   }

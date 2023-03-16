@@ -25,11 +25,12 @@ export default function HomeScreen() {
   });
   const [active, setActive] = React.useState(1);
   const {HEIGHT} = NativeModules?.StatusBarManager;
-  const [temperature, setTemperature] = React.useState(null);
-  const {current} = useSelector(Store => Store.ForecastReducer);
-  const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=437b42a4ae70478eb8271532230903&q=${location.lat}, ${location.long}&days=5&aqi=yes&alerts=yes`;
-  // http://api.weatherapi.com/v1/forecast.json?key=3b0e1975ea6e4c6e9dd124408230703&q=28.6278956,77.3057513&days=5&aqi=yes&alerts=yes
-  console.log(current.con);
+  const {current, currentLocation} = useSelector(
+    Store => Store.ForecastReducer,
+  );
+  console.log();
+
+  console.log('current', current);
 
   const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
@@ -52,6 +53,8 @@ export default function HomeScreen() {
                 lat: position.coords.latitude,
                 long: position.coords.longitude,
               });
+              const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=437b42a4ae70478eb8271532230903&q=${position.coords.latitude},${position.coords.longitude}&days=5&aqi=yes&alerts=yes`;
+              dispatch(wetherApi(apiUrl));
             },
             error => console.log(error),
             {
@@ -74,6 +77,8 @@ export default function HomeScreen() {
             lat: position.coords.latitude,
             long: position.coords.longitude,
           });
+          const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=437b42a4ae70478eb8271532230903&q=${position.coords.latitude},${position.coords.longitude}&days=5&aqi=yes&alerts=yes`;
+          dispatch(wetherApi(apiUrl));
         },
         error => console.log(error),
         {
@@ -87,14 +92,10 @@ export default function HomeScreen() {
 
   const next = () => {};
 
-  const wetherApi = () =>
+  const wetherApi = apiUrl =>
     getWeatherApi(
       apiUrl,
-      response => {
-        console.log('response',response);
-        setTemperature(response.current.temp_c);
-        // console.log(`${response.current.temp_c}`);
-      },
+      response => {},
       errorResponse => {
         console.log(errorResponse);
       },
@@ -102,7 +103,6 @@ export default function HomeScreen() {
 
   React.useEffect(() => {
     requestLocationPermission();
-    dispatch(wetherApi());
   }, []);
 
   const activeButton = tab => {
@@ -123,8 +123,9 @@ export default function HomeScreen() {
           color: '#FFFFFF',
           fontSize: 39.88,
           fontWeight: '500',
+          textAlign: 'center',
         }}>
-        Varanasi
+        {currentLocation?.country}
       </Text>
       <Text style={{color: 'lightgrey', fontSize: 15}}>{'10 Dec, 2022'}</Text>
       <View
@@ -180,7 +181,7 @@ export default function HomeScreen() {
           fontSize: 39.88,
           fontWeight: '900',
         }}>
-        {temperature}
+        {current.temp_c}
       </Text>
       <Text
         style={{
@@ -190,11 +191,11 @@ export default function HomeScreen() {
       </Text>
       <View
         style={{
-          flexDirection: 'row',
           width: '90%',
-          justifyContent: 'space-between',
           marginVertical: 20,
+          flexDirection: 'row',
           alignItems: 'center',
+          justifyContent: 'space-between',
         }}>
         <Text style={{color: 'white', fontSize: 20}}>Today</Text>
         <Text style={{color: '#5491E2', fontSize: 21}}>View Full Report</Text>
@@ -202,20 +203,21 @@ export default function HomeScreen() {
       <FlatList
         data={['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']}
         horizontal
-        style={{width: '90%',borderRadius: 13,backgroundColor: '#2566A333',}}
+        style={{width: '90%', borderRadius: 13, backgroundColor: '#2566A333'}}
         bounces={false}
         contentContainerStyle={{
-          // width: '90%',
-          paddingVertical: 20,
           paddingRight: 15,
-          
-          
-          // height: '86%',
+          paddingVertical: 20,
         }}
         renderItem={() => {
           return (
-            <View style={{borderWidth: 1,marginLeft: 15,borderRadius: 25,padding: 16,}}>
-              <Text style={{color: 'white',fontSize: 23,}}>28°C</Text>
+            <View
+              style={{
+                padding: 16,
+                marginLeft: 15,
+                borderRadius: 25,
+              }}>
+              <Text style={{color: 'white', fontSize: 23}}>28°C</Text>
             </View>
           );
         }}

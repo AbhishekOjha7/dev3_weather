@@ -1,7 +1,7 @@
 import {View, Text} from 'react-native';
 import React from 'react';
-import HomeScreen from './src/screen/home';
 import { Provider } from 'react-redux';
+import HomeScreen from './src/screen/home';
 import { store } from './src/redux/store';
 
 export default function App() {
@@ -13,3 +13,4 @@ export default function App() {
     </View>
   );
 }
+
